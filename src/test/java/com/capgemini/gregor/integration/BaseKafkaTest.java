@@ -32,6 +32,8 @@ import org.junit.BeforeClass;
  */
 public class BaseKafkaTest {
     
+    private static final int WAIT_TIME_MS = 2000;
+    
     public static final int BROKER_PORT = 9093;
     
     public static final int ZOOKEEPER_PORT = 2183;
@@ -48,6 +50,9 @@ public class BaseKafkaTest {
     public static void startKafka() {
         kafka = new KafkaUnit(ZOOKEEPER_PORT, BROKER_PORT);
         kafka.startup();
+        
+        sleep();
+        
         kafka.createTopic(TEST_TOPIC);
         kafka.createTopic(TEST_TOPIC2);
         kafka.createTopic(TEST_TOPIC3);
@@ -56,6 +61,8 @@ public class BaseKafkaTest {
     @AfterClass
     public static void shutdownKafka() {
         kafka.shutdown();
+        
+        sleep();
     }
     
     protected void createTopic(String topicName) {
@@ -66,5 +73,13 @@ public class BaseKafkaTest {
         final KeyedMessage<String, String> message = new KeyedMessage<String, String>(topic, value);
         
         kafka.sendMessages(message);
+    }
+    
+    private static void sleep() {
+        try {
+            Thread.sleep(WAIT_TIME_MS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
