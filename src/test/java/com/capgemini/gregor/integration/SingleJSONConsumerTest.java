@@ -74,42 +74,14 @@ public class SingleJSONConsumerTest extends BaseKafkaTest {
         assertEquals("mapValue values incorrect", true, Arrays.equals(testObject.getMapValue().values().toArray(), new String[]{"Value1", "Value2"}));
     }
     
-//    @Test
-//    public void testMultipleMessages() {
-//        final String message1 = "Hey Mr Tambourine Man";
-//        sendMessage(TEST_TOPIC, message1);        
-//        assertMessageReceived(message1, 0);
-//        
-//        final String message2 = "play a song for me";
-//        sendMessage(TEST_TOPIC, message2);        
-//        assertMessageReceived(message2, 1);
-//        
-//        final String message3 = "I'm not sleepy and";
-//        sendMessage(TEST_TOPIC, message3);        
-//        assertMessageReceived(message3, 2);
-//        
-//        final String message4 = "there is no place I'm going to";
-//        sendMessage(TEST_TOPIC, message4);        
-//        assertMessageReceived(message4, 3);
-//    }
-//    
-//    @Test
-//    public void testWrongTopic() {
-//        final String message = "This should not be received";
-//        
-//        sendMessage(TEST_TOPIC2, message);
-//        
-//        waitForMessage();
-//        assertEquals("Message received incorrectly", 0, receivedMessages.size());
-//    }
-    
-    private void waitForMessage() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    @Test
+    public void testWrongTopic() {
+        final String message = "This should not be received";
+        
+        sendMessage(TEST_TOPIC2, message);
+        
+        waitForMessage();
+        assertEquals("Message received incorrectly", 0, receivedMessages.size());
     }
     
     @Configuration

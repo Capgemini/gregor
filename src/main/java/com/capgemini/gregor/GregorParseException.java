@@ -14,24 +14,20 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor;
 
-import com.capgemini.gregor.internal.InstanceDetails;
+public class GregorParseException extends GregorException {
 
-/**
- * Kafka consumer details.
- * 
- * @author craigwilliams84
- *
- */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5286613374878032600L;
 
-    String getConsumerMethodName();
+    public GregorParseException(String message) {
+        super(message);
+    }
 
-    Class<?> getConsumerMethodArgType();
-    
-    Class<?> getPayloadDecoderClass();
-    
-    Class<?> getKeyDecoderClass();
+    public GregorParseException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

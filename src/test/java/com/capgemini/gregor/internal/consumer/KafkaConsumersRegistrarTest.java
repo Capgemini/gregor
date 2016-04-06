@@ -34,6 +34,7 @@ import org.springframework.integration.kafka.serializer.common.StringDecoder;
 import com.capgemini.gregor.KafkaConsumer;
 import com.capgemini.gregor.PayloadContent;
 import com.capgemini.gregor.TestObject;
+import com.capgemini.gregor.internal.KafkaBeanDefinitionFactory;
 
 public class KafkaConsumersRegistrarTest {
     private static final String BEAN_NAME_TO_REGISTER_1 = "testBean1";
@@ -43,14 +44,11 @@ public class KafkaConsumersRegistrarTest {
     private static final String CONSUMER_BEAN_NAME = "consumerBean";
 
     private static final String TEST_TOPIC = "testTopic";
-
-    private String topicNamePassedToFactory;
     
     private ConsumerDetails consumerDetailsPassedToFactory;
     
     @After
     public void reset() {
-        topicNamePassedToFactory = null;
         consumerDetailsPassedToFactory = null;
     }
     
@@ -65,18 +63,11 @@ public class KafkaConsumersRegistrarTest {
     }
     
     @Test
-    public void testCorrectTopicNamePassedToFactory() {
-        
-        wireUpAndCallRegisterBeanDefinitions();
-        
-        assertEquals("Incorrect topic name passed to registry", TEST_TOPIC, topicNamePassedToFactory);  
-    }
-    
-    @Test
     public void testCorrectConsumerDetailsPassedToFactory() {
         
         wireUpAndCallRegisterBeanDefinitions();
         
+        assertEquals("Incorrect topic name set on consumer details", TEST_TOPIC, consumerDetailsPassedToFactory.getTopicName()); 
         assertEquals("Incorrect bean name set on consumer details", CONSUMER_BEAN_NAME, consumerDetailsPassedToFactory.getConsumerBeanName());
         assertEquals("Incorrect consumer method name set on consumer details", "consume", consumerDetailsPassedToFactory.getConsumerMethodName());  
         assertEquals("Incorrect consumer method arg set on consumer details", TestObject.class, consumerDetailsPassedToFactory.getConsumerMethodArgType());
@@ -114,19 +105,19 @@ public class KafkaConsumersRegistrarTest {
     
     private class KafkaConsumersRegistrarForTest extends KafkaConsumersRegistrar {
        
-        private KafkaConsumerBeanDefinitionFactory factory;
+        private KafkaBeanDefinitionFactory<ConsumerDetails> factory;
         
         private KafkaConsumersRegistrarForTest(BeanDefinitionHolder... holdersReturnedByFactory) {
             this.factory = new DummyKafkaConsumerBeanDefinitionFactory(holdersReturnedByFactory);
         }
         
         @Override
-        protected KafkaConsumerBeanDefinitionFactory getDefinitionFactory() {
+        protected KafkaBeanDefinitionFactory<ConsumerDetails> getDefinitionFactory() {
             return factory;
         }
     }
     
-    private class DummyKafkaConsumerBeanDefinitionFactory implements KafkaConsumerBeanDefinitionFactory {
+    private class DummyKafkaConsumerBeanDefinitionFactory implements KafkaBeanDefinitionFactory<ConsumerDetails> {
         
         BeanDefinitionHolder[] holders;
         
@@ -135,8 +126,7 @@ public class KafkaConsumersRegistrarTest {
         }
         
         @Override
-        public Set<BeanDefinitionHolder> create(String topicName, ConsumerDetails consumerDetails) {
-            topicNamePassedToFactory = topicName;
+        public Set<BeanDefinitionHolder> create(ConsumerDetails consumerDetails) {
             consumerDetailsPassedToFactory = consumerDetails;
             
             return new HashSet<BeanDefinitionHolder>(Arrays.asList(holders));

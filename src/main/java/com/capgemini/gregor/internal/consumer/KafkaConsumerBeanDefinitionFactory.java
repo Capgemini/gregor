@@ -16,25 +16,151 @@
 
 package com.capgemini.gregor.internal.consumer;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.integration.kafka.inbound.KafkaMessageDrivenChannelAdapter;
+import org.springframework.integration.kafka.listener.KafkaMessageListenerContainer;
+
+import com.capgemini.gregor.GregorException;
+import com.capgemini.gregor.TypeSettableDecoder;
+import com.capgemini.gregor.internal.KafkaBeanDefinitionFactory;
+import com.capgemini.gregor.internal.KafkaCommonConfiguration;
 
 /**
- * Factory for creating a set of bean definitions required for a single
- * kafka topic consumer.
- * 
+ * Singleton KafkaConsumerBeanDefinitionFactory
  * @author craigwilliams84
  *
  */
-public interface KafkaConsumerBeanDefinitionFactory {
+public class KafkaConsumerBeanDefinitionFactory implements KafkaBeanDefinitionFactory<ConsumerDetails> {
+
+    private static KafkaConsumerBeanDefinitionFactory INSTANCE;
+    
+    private static final String BEAN_NAME_PREFIX = "gregor-";
+    
+    private AtomicInteger containerCount = new AtomicInteger(0);
+    
+    private KafkaConsumerBeanDefinitionFactory() {
+        //Private singleton constructor
+    }
+    
+    public static KafkaConsumerBeanDefinitionFactory getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new KafkaConsumerBeanDefinitionFactory();
+        }
+        
+        return INSTANCE;
+    }
     
     /**
-     * Create a set of bean definitions required for a kafka topic consumer.
-     * 
-     * @param topicName The topic name to be consumed
-     * @param consumerDetails The details for the consumer that the bean definitions are to be created for
-     * @return The bean definition holder set
+     * {@inheritDoc}
      */
-    Set<BeanDefinitionHolder> create(String topicName, ConsumerDetails consumerDetails);
+    public Set<BeanDefinitionHolder> create(ConsumerDetails consumerDetails) {
+        final BeanDefinitionHolder containerHolder = createKafkaContainerDefinitionHolder(consumerDetails.getTopicName());
+        
+        final BeanDefinitionHolder messageHandlerHolder = createMessageHandlerDefinitionHolder(consumerDetails);
+        
+        final BeanDefinitionHolder channelHolder = createChannelDefinitionHolder(messageHandlerHolder.getBeanName());
+        
+        final BeanDefinitionHolder adapterHolder = createKafkaAdapterDefinitionHolder(
+                containerHolder.getBeanName(), channelHolder.getBeanName(), consumerDetails);
+        
+        return new HashSet<BeanDefinitionHolder>(Arrays.asList(containerHolder, messageHandlerHolder, channelHolder, adapterHolder));
+    }
+
+    private BeanDefinitionHolder createKafkaContainerDefinitionHolder(String topicName) {
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(KafkaMessageListenerContainer.class);
+        
+        builder.addConstructorArgReference(KafkaConsumersConfiguration.KAFKA_CONNECTION_FACTORY_BEAN_NAME);
+        builder.addConstructorArgValue(topicName);
+        
+        builder.addPropertyValue("maxFetch", 300 * 1024);
+        builder.addPropertyValue("concurrency", 1);
+        
+        final BeanDefinitionHolder holder = new BeanDefinitionHolder(
+                builder.getBeanDefinition(), getContainerBeanName(topicName));
+        
+        return holder;
+    }
+    
+    private BeanDefinitionHolder createMessageHandlerDefinitionHolder(ConsumerDetails consumerDetails) {
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ReflectiveDelegatingMessageHandler.class);
+        
+        builder.addConstructorArgReference(consumerDetails.getConsumerBeanName());
+        builder.addConstructorArgValue(consumerDetails.getConsumerMethodName());
+        builder.addConstructorArgValue(consumerDetails.getConsumerMethodArgType());
+        
+        final BeanDefinitionHolder holder = new BeanDefinitionHolder(
+                builder.getBeanDefinition(), getMessageHandlerBeanName(consumerDetails));
+        
+        return holder;
+    }
+    
+    private BeanDefinitionHolder createChannelDefinitionHolder(String messageHandlerBeanName) {
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ChannelFactoryBean.class);
+        
+        builder.addPropertyReference("messageHandler", messageHandlerBeanName);
+        
+        final BeanDefinitionHolder holder = new BeanDefinitionHolder(
+                builder.getBeanDefinition(), getChannelBeanName(messageHandlerBeanName));
+        
+        return holder;      
+    }
+    
+    private BeanDefinitionHolder createKafkaAdapterDefinitionHolder(
+            String containerBeanName, String channelBeanName, ConsumerDetails consumerDetails) {
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(KafkaMessageDrivenChannelAdapter.class);
+        
+        builder.addConstructorArgReference(containerBeanName);
+
+        builder.addPropertyValue("keyDecoder", instantiateDecoderClass(consumerDetails.getKeyDecoderClass(), consumerDetails.getConsumerMethodArgType()));
+        builder.addPropertyValue("payloadDecoder", instantiateDecoderClass(consumerDetails.getPayloadDecoderClass(), consumerDetails.getConsumerMethodArgType()));
+        builder.addPropertyReference("outputChannel", channelBeanName);
+        
+        final BeanDefinitionHolder holder = new BeanDefinitionHolder(
+                builder.getBeanDefinition(), getAdapterBeanName(channelBeanName));
+        
+        return holder;
+    }
+    
+    private String firstLetterToUpper(String stringToModify) {
+        return stringToModify.substring(0, 1).toUpperCase() + stringToModify.substring(1);
+    }
+    
+    private <T> T instantiateDecoderClass(Class<T> decoderClass, Class<?> argType) {
+        try {
+            final T decoder = decoderClass.getConstructor().newInstance();
+            
+            if (decoder instanceof TypeSettableDecoder) {
+                ((TypeSettableDecoder) decoder).setType(argType);
+            }
+            
+            return decoder;
+        } catch (Exception e) {
+            throw new GregorException("Unable to instantiate decoder class", e);
+        } 
+    }
+    
+    //TODO Sort out these names...too long!
+    
+    private String getContainerBeanName(String topicName) {
+        return BEAN_NAME_PREFIX + "Container" + firstLetterToUpper(topicName) + containerCount.incrementAndGet();
+    }
+    
+    private String getChannelBeanName(String messageHandlerBeanName) {
+        return BEAN_NAME_PREFIX + "ChannelFor" + messageHandlerBeanName;
+    }
+    
+    private String getMessageHandlerBeanName(ConsumerDetails consumerDetails) {
+        return BEAN_NAME_PREFIX + "HandlerDelegatingTo" 
+                + consumerDetails.getConsumerBeanName() + ":" + consumerDetails.getConsumerMethodName();
+    }
+    
+    private String getAdapterBeanName(String channelName) {
+        return BEAN_NAME_PREFIX + "AdapterFor" + channelName;
+    }
 }

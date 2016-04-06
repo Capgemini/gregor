@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.capgemini.gregor.internal.KafkaCommonConfiguration;
 import com.capgemini.gregor.internal.consumer.KafkaConsumersConfiguration;
 import com.capgemini.gregor.internal.consumer.KafkaConsumersRegistrar;
 

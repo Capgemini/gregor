@@ -14,24 +14,9 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor.internal;
 
-import com.capgemini.gregor.internal.InstanceDetails;
-
-/**
- * Kafka consumer details.
- * 
- * @author craigwilliams84
- *
- */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
-
-    String getConsumerMethodName();
-
-    Class<?> getConsumerMethodArgType();
+public interface InstanceDetails {
     
-    Class<?> getPayloadDecoderClass();
-    
-    Class<?> getKeyDecoderClass();
+    String getTopicName();
 }

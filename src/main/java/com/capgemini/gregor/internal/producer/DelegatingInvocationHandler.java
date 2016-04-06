@@ -14,24 +14,24 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor.internal.producer;
 
-import com.capgemini.gregor.internal.InstanceDetails;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 /**
- * Kafka consumer details.
+ * An invocation handler that invokes a registered delegate handler, dependent on the method.
  * 
  * @author craigwilliams84
  *
  */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
+public interface DelegatingInvocationHandler extends InvocationHandler {
 
-    String getConsumerMethodName();
-
-    Class<?> getConsumerMethodArgType();
-    
-    Class<?> getPayloadDecoderClass();
-    
-    Class<?> getKeyDecoderClass();
+    /**
+     * Register a delegate invocation handler for the specified method.
+     * 
+     * @param method The method that this delegate should be invoked for.
+     * @param delegate The delegate invocation handler
+     */
+    void addDelegateHandler(Method method, InvocationHandler delegate);
 }

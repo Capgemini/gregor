@@ -24,6 +24,8 @@ package com.capgemini.gregor.internal.consumer;
  */
 public class ImmutableConsumerDetails implements ConsumerDetails {
     
+    private String topicName;
+    
     private String consumerBeanName;
     
     private String consumerMethodName;
@@ -34,8 +36,9 @@ public class ImmutableConsumerDetails implements ConsumerDetails {
     
     private Class<?> keyDecoderClass;
 
-    public ImmutableConsumerDetails(String consumerBeanName, String consumerMethodName, 
+    public ImmutableConsumerDetails(String topicName, String consumerBeanName, String consumerMethodName, 
             Class<?> consumerMethodArgType, Class<?> payloadDecoderClass, Class<?> keyDecoderClass) {
+        this.topicName = topicName;
         this.consumerBeanName = consumerBeanName;
         this.consumerMethodName = consumerMethodName;
         this.consumerMethodArgType = consumerMethodArgType;
@@ -43,6 +46,10 @@ public class ImmutableConsumerDetails implements ConsumerDetails {
         this.keyDecoderClass = keyDecoderClass;
     }
 
+    public String getTopicName() {
+        return topicName;
+    }
+    
     public String getConsumerBeanName() {
         return consumerBeanName;
     }

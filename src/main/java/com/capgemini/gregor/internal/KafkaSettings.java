@@ -38,6 +38,10 @@ public class KafkaSettings {
     public KafkaSettings(Environment environment) {
         this.environment = environment;
     }
+    
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 
     public String getBrokerAddress() {
         return getSetting(BROKER_ADDRESS_PROPERTY, BROKER_ADDRESS_DEFAULT);

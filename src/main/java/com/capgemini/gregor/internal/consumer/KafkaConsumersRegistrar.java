@@ -33,6 +33,7 @@ import org.springframework.util.ClassUtils;
 
 import com.capgemini.gregor.GregorException;
 import com.capgemini.gregor.KafkaConsumer;
+import com.capgemini.gregor.internal.KafkaBeanDefinitionFactory;
 
 /**
  * Scans for any bean methods that have been annotated with the KafkaConsumer
@@ -104,7 +105,7 @@ public class KafkaConsumersRegistrar implements ImportBeanDefinitionRegistrar, B
                 final KafkaConsumer consumer = method.getAnnotation(KafkaConsumer.class);
                 
                 final Set<BeanDefinitionHolder> holders =  getDefinitionFactory().create(
-                        consumer.topic(), createConsumerDetails(consumer, beanName, method));
+                        createConsumerDetails(consumer, beanName, method));
                 
                 beanHolders.addAll(holders);
             }
@@ -113,8 +114,8 @@ public class KafkaConsumersRegistrar implements ImportBeanDefinitionRegistrar, B
         return beanHolders;
     }
     
-    protected KafkaConsumerBeanDefinitionFactory getDefinitionFactory() {
-        return DefaultKafkaConsumerBeanDefinitionFactory.getInstance();
+    protected KafkaBeanDefinitionFactory<ConsumerDetails> getDefinitionFactory() {
+        return KafkaConsumerBeanDefinitionFactory.getInstance();
     }
     
     protected Class<? extends Annotation> getConsumerAnnotationClass() {
@@ -143,7 +144,7 @@ public class KafkaConsumersRegistrar implements ImportBeanDefinitionRegistrar, B
         
         //TODO method validation
         final Class<?> payloadDecoderClass = getPayloadDecoder(consumer);
-        final ConsumerDetails details = new ImmutableConsumerDetails(consumerBeanName, 
+        final ConsumerDetails details = new ImmutableConsumerDetails(consumer.topic(), consumerBeanName, 
                 consumerMethod.getName(), consumerMethod.getParameterTypes()[0], payloadDecoderClass, consumer.keyDecoder());
         
         return details;

@@ -87,15 +87,6 @@ public class SingleStringConsumerTest extends BaseKafkaTest {
         assertEquals("Message received incorrectly", 0, receivedMessages.size());
     }
     
-    private void waitForMessage() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    
     private void assertMessageReceived(String expectedMessage, int index) {
         waitForMessage();
         

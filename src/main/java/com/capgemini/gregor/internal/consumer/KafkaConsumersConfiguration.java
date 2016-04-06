@@ -16,30 +16,34 @@
 
 package com.capgemini.gregor.internal.consumer;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.integration.kafka.core.BrokerAddress;
 import org.springframework.integration.kafka.core.BrokerAddressListConfiguration;
 import org.springframework.integration.kafka.core.ConnectionFactory;
 import org.springframework.integration.kafka.core.DefaultConnectionFactory;
 
+import com.capgemini.gregor.internal.KafkaCommonConfiguration;
 import com.capgemini.gregor.internal.KafkaSettings;
 
 /**
- * Configuration to create beans that are common for all kafka consumers
+ * Configuration to create beans where one instance is required for both kafka consumers and producers
  * 
  * @author craigwilliams84
  *
  */
 @Configuration
-public class KafkaConsumersConfiguration {
+@ConditionalOnMissingBean(ConnectionFactory.class)
+public class KafkaConsumersConfiguration extends KafkaCommonConfiguration {
     
-    static final String KAFKA_CONNECTION_FACTORY_BEAN_NAME = "kafkaBrokerConnectionFactory";
-    
+    public static final String KAFKA_CONNECTION_FACTORY_BEAN_NAME = "kafkaBrokerConnectionFactory";
+        
     @Bean(name = KAFKA_CONNECTION_FACTORY_BEAN_NAME)
-    public ConnectionFactory kafkaBrokerConnectionFactory(KafkaSettings config) throws Exception {
-        return new DefaultConnectionFactory(kafkaBrokerConfiguration(config));
+    public ConnectionFactory kafkaBrokerConnectionFactory(org.springframework.integration.kafka.core.Configuration config) throws Exception {
+        return new DefaultConnectionFactory(config);
     }
     
     @Bean
@@ -48,11 +52,5 @@ public class KafkaConsumersConfiguration {
                 BrokerAddress.fromAddress(config.getBrokerAddress()));
         configuration.setSocketTimeout(500);
         return configuration;
-    }
-    
-    @Bean 
-    public KafkaSettings kafkaSettings(Environment environment) {
-        return new KafkaSettings(environment);
-    }
-    
+    }    
 }

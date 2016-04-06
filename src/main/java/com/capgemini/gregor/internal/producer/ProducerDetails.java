@@ -14,24 +14,26 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor.internal.producer;
+
+import java.lang.reflect.Method;
+
+import org.apache.kafka.common.serialization.Serializer;
 
 import com.capgemini.gregor.internal.InstanceDetails;
 
-/**
- * Kafka consumer details.
- * 
- * @author craigwilliams84
- *
- */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
-
-    String getConsumerMethodName();
-
-    Class<?> getConsumerMethodArgType();
+public interface ProducerDetails extends InstanceDetails {
     
-    Class<?> getPayloadDecoderClass();
+    Method getProducerMethod();
     
-    Class<?> getKeyDecoderClass();
+    Class<?> getClientClass();
+
+    Class<?> getKeyClassType();
+    
+    Class<?> getPayloadClassType();
+    
+    Class<? extends Serializer<?>> getKeySerializerClass();
+    
+    Class<? extends Serializer<?>> getPayloadSerializerClass();
+
 }

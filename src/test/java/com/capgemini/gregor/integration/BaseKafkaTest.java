@@ -75,6 +75,15 @@ public class BaseKafkaTest {
         kafka.sendMessages(message);
     }
     
+    protected void waitForMessage() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     private static void sleep() {
         try {
             Thread.sleep(WAIT_TIME_MS);

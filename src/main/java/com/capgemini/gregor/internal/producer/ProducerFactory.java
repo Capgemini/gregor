@@ -14,24 +14,14 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor.internal.producer;
 
-import com.capgemini.gregor.internal.InstanceDetails;
+import org.apache.kafka.clients.producer.Producer;
+import org.springframework.integration.kafka.support.ProducerMetadata;
 
-/**
- * Kafka consumer details.
- * 
- * @author craigwilliams84
- *
- */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
+import com.capgemini.gregor.internal.KafkaSettings;
 
-    String getConsumerMethodName();
-
-    Class<?> getConsumerMethodArgType();
+public interface ProducerFactory<K,V> {
     
-    Class<?> getPayloadDecoderClass();
-    
-    Class<?> getKeyDecoderClass();
+    Producer<K,V> create(ProducerMetadata<K,V> details, KafkaSettings settings);
 }

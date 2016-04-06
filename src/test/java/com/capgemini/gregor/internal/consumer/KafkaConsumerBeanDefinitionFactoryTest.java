@@ -29,11 +29,11 @@ import org.springframework.integration.kafka.serializer.common.StringDecoder;
 
 import com.capgemini.gregor.TestObject;
 
-public class DefaultKafkaConsumerBeanDefinitionFactoryTest {
+public class KafkaConsumerBeanDefinitionFactoryTest {
 
     private static final String TEST_TOPIC_NAME = "testTopic";
     
-    private DefaultKafkaConsumerBeanDefinitionFactory underTest = DefaultKafkaConsumerBeanDefinitionFactory.getInstance();
+    private KafkaConsumerBeanDefinitionFactory underTest = KafkaConsumerBeanDefinitionFactory.getInstance();
     
     @Test
     public void testKafkaContainerBeanDefinitionAdded() {
@@ -47,7 +47,7 @@ public class DefaultKafkaConsumerBeanDefinitionFactoryTest {
     
     @Test
     public void testChannelFactoryBeanDefinitionAdded() {
-        runBeanDefinitionExistanceTest(ChannelFactory.class);
+        runBeanDefinitionExistanceTest(ChannelFactoryBean.class);
     }
     
     @Test
@@ -56,7 +56,7 @@ public class DefaultKafkaConsumerBeanDefinitionFactoryTest {
     }
     
     private void runBeanDefinitionExistanceTest(Class<?> beanClassToCheck) {
-        final Set<BeanDefinitionHolder> holders = underTest.create(TEST_TOPIC_NAME, createConsumerDetails());
+        final Set<BeanDefinitionHolder> holders = underTest.create(createConsumerDetails(TEST_TOPIC_NAME));
         
         assertBeanDefinitionExistsOfType(holders, KafkaMessageListenerContainer.class);
     }
@@ -74,8 +74,8 @@ public class DefaultKafkaConsumerBeanDefinitionFactoryTest {
         TestCase.fail("Bean definition for class: " + typeClass.getName() + " not created");
     }
     
-    private ConsumerDetails createConsumerDetails() {
-        return new ImmutableConsumerDetails("consumerBean", 
+    private ConsumerDetails createConsumerDetails(String testTopic) {
+        return new ImmutableConsumerDetails(testTopic, "consumerBean", 
                 "consumerMethod", TestObject.class, StringDecoder.class, StringDecoder.class);
     }
 }

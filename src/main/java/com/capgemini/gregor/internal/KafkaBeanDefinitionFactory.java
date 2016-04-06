@@ -14,26 +14,27 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor;
+package com.capgemini.gregor.internal;
+
+import java.util.Set;
+
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 
 /**
- * Generic gregor exception.
+ * Factory for creating a set of bean definitions required for a single
+ * gregor kafka instance (eg. a producer or consumer).
  * 
  * @author craigwilliams84
  *
  */
-public class GregorException extends RuntimeException {
-
+public interface KafkaBeanDefinitionFactory<T> {
+    
     /**
+     * Create a set of bean definitions required for a kafka topic consumer.
      * 
+     * @param instancerDetails The details for the gregor kafka instance (eg. consumer/producer)
+     * that the bean definitions are to be created for.
+     * @return The bean definition holder set
      */
-    private static final long serialVersionUID = 2913922929166435340L;
-
-    public GregorException(String message) {
-        super(message);
-    }
-
-    public GregorException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    Set<BeanDefinitionHolder> create(T instanceDetails);
 }

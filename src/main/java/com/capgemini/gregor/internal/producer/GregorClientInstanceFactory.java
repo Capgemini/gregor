@@ -14,24 +14,24 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor.internal.producer;
 
-import com.capgemini.gregor.internal.InstanceDetails;
+import java.util.List;
 
 /**
- * Kafka consumer details.
+ * A GregorClientInstanceFactory implemented via a java proxy.
  * 
  * @author craigwilliams84
  *
  */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
-
-    String getConsumerMethodName();
-
-    Class<?> getConsumerMethodArgType();
+public interface GregorClientInstanceFactory {
     
-    Class<?> getPayloadDecoderClass();
-    
-    Class<?> getKeyDecoderClass();
+    /**
+     * Build a client implementation of the specified type.
+     * 
+     * @param type The class of the client that should be built.
+     * @param producerDetailsList Producer details
+     * @return The client implementation
+     */
+    public<T> T build(Class<T> type, List<ProducerDetails> producerDetailsList);
 }

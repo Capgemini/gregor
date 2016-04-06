@@ -14,24 +14,15 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.internal.consumer;
+package com.capgemini.gregor;
 
-import com.capgemini.gregor.internal.InstanceDetails;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * Kafka consumer details.
- * 
- * @author craigwilliams84
- *
- */
-public interface ConsumerDetails extends InstanceDetails {
-    String getConsumerBeanName();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.PARAMETER, ElementType.METHOD})
+public @interface Key {
 
-    String getConsumerMethodName();
-
-    Class<?> getConsumerMethodArgType();
-    
-    Class<?> getPayloadDecoderClass();
-    
-    Class<?> getKeyDecoderClass();
 }

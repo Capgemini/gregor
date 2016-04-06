@@ -26,11 +26,11 @@ import org.springframework.messaging.MessageHandler;
 
 public class ChannelFactoryTest {
 
-    private ChannelFactory underTest;
+    private ChannelFactoryBean underTest;
     
     @Before
     public void init() {
-        underTest = new ChannelFactory();
+        underTest = new ChannelFactoryBean();
     }
     
     @Test

@@ -104,15 +104,6 @@ public class TwoStringConsumersDifferentTopicsTest extends BaseKafkaTest {
         assertMessageNotReceived(TEST_TOPIC2, message, 0, false);
     }
     
-    private void waitForMessage() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    
     private void assertMessageReceived(String topic, String expectedMessage, int index) {
         waitForMessage();
         
