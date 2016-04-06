@@ -1,3 +1,6 @@
+machine:
+  version: oraclejdk8
+
 test:
   override:
     - mvn deploy -s settings.xml
