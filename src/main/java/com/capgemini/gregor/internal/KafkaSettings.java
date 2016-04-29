@@ -29,7 +29,8 @@ import java.util.List;
  */
 
 public class KafkaSettings {
-    
+
+    private static final String BROKER_ADDRESS_DELIMITER = ",";
     private static final String BROKER_ADDRESSES_PROPERTY = "kafka.addresses";
     private static final String BROKER_ADDRESS_DEFAULT = "localhost:9092";
     
@@ -49,7 +50,7 @@ public class KafkaSettings {
     public List<String> getBrokerAddresses() {
         final String addresses = getRawBrokerAddresses();
 
-        return Arrays.asList(addresses.split(","));
+        return Arrays.asList(addresses.split(BROKER_ADDRESS_DELIMITER));
     }
 
     public String getRawBrokerAddresses() {
