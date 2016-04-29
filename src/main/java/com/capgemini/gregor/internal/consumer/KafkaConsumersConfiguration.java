@@ -29,6 +29,8 @@ import org.springframework.integration.kafka.core.DefaultConnectionFactory;
 import com.capgemini.gregor.internal.KafkaCommonConfiguration;
 import com.capgemini.gregor.internal.KafkaSettings;
 
+import java.util.List;
+
 /**
  * Configuration to create beans where one instance is required for both kafka consumers and producers
  * 
@@ -48,9 +50,22 @@ public class KafkaConsumersConfiguration extends KafkaCommonConfiguration {
     
     @Bean
     public org.springframework.integration.kafka.core.Configuration kafkaBrokerConfiguration(KafkaSettings config) {
-        BrokerAddressListConfiguration configuration = new BrokerAddressListConfiguration(
-                BrokerAddress.fromAddress(config.getBrokerAddress()));
+        final BrokerAddressListConfiguration configuration = new BrokerAddressListConfiguration(
+                getBrokerAddresses(config));
+
         configuration.setSocketTimeout(500);
         return configuration;
-    }    
+    }
+
+    private BrokerAddress[] getBrokerAddresses(KafkaSettings config) {
+        final List<String> brokerAddressesStrings = config.getBrokerAddresses();
+
+        final BrokerAddress[] brokerAddresses = new BrokerAddress[brokerAddressesStrings.size()];
+
+        for (int i  = 0; i < brokerAddressesStrings.size(); i++) {
+            brokerAddresses[i] = BrokerAddress.fromAddress(brokerAddressesStrings.get(i));
+        }
+
+        return brokerAddresses;
+    }
 }

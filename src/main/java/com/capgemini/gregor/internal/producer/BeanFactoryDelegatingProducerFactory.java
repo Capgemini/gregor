@@ -45,6 +45,6 @@ public class BeanFactoryDelegatingProducerFactory<K,V> implements ProducerFactor
     }
     
     protected ProducerFactoryBean<K,V> getDelegate(ProducerMetadata<K,V> metadata, KafkaSettings settings) {
-        return new ProducerFactoryBean<K,V>(metadata, settings.getBrokerAddress());
+        return new ProducerFactoryBean<K,V>(metadata, settings.getRawBrokerAddresses());
     }
 }

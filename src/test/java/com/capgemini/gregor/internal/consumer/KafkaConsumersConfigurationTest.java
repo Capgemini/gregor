@@ -29,6 +29,9 @@ import org.springframework.integration.kafka.core.Configuration;
 
 import com.capgemini.gregor.internal.KafkaSettings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class KafkaConsumersConfigurationTest {
 
     private static final String BROKER_ADDRESS = "kafka.url:1234";
@@ -73,7 +76,12 @@ public class KafkaConsumersConfigurationTest {
     
     private KafkaSettings createSettings() {
         final KafkaSettings mockSettings = mock(KafkaSettings.class);
-        when(mockSettings.getBrokerAddress()).thenReturn(BROKER_ADDRESS);
+        final List<String> addresses = new ArrayList<String>();
+        addresses.add(BROKER_ADDRESS);
+
+
+
+        when(mockSettings.getBrokerAddresses()).thenReturn(addresses);
         
         return mockSettings;
     }

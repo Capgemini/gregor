@@ -18,6 +18,9 @@ package com.capgemini.gregor.internal;
 
 import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Encapsulates Kafka instance configuration properties.
  * 
@@ -27,7 +30,7 @@ import org.springframework.core.env.Environment;
 
 public class KafkaSettings {
     
-    private static final String BROKER_ADDRESS_PROPERTY = "kafka.address";
+    private static final String BROKER_ADDRESSES_PROPERTY = "kafka.addresses";
     private static final String BROKER_ADDRESS_DEFAULT = "localhost:9092";
     
     private static final String ZOOKEEPER_ADDRESS_PROPERTY = "zookeeper.address";
@@ -43,8 +46,14 @@ public class KafkaSettings {
         this.environment = environment;
     }
 
-    public String getBrokerAddress() {
-        return getSetting(BROKER_ADDRESS_PROPERTY, BROKER_ADDRESS_DEFAULT);
+    public List<String> getBrokerAddresses() {
+        final String addresses = getRawBrokerAddresses();
+
+        return Arrays.asList(addresses.split(","));
+    }
+
+    public String getRawBrokerAddresses() {
+        return getSetting(BROKER_ADDRESSES_PROPERTY, BROKER_ADDRESS_DEFAULT);
     }
 
     public String getZookeeperAddress() {

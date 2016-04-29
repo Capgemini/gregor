@@ -40,7 +40,7 @@ import com.capgemini.gregor.integration.TwoStringConsumersDifferentTopicsTest.Te
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
-@IntegrationTest({"kafka.address=localhost:" + BaseKafkaTest.BROKER_PORT, 
+@IntegrationTest({"kafka.addresses=localhost:" + BaseKafkaTest.BROKER_PORT,
     "zookeeper.address=localhost:" + BaseKafkaTest.ZOOKEEPER_PORT})
 public class TwoStringConsumersDifferentTopicsTest extends BaseKafkaTest {
     
