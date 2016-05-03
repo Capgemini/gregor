@@ -30,7 +30,6 @@ public class JSONSerializerTest {
     @Test
     public void testSerialize() {
         final JSONSerializer serializer = new JSONSerializer();
-        serializer.configure(null, true);
 
         final TestObject testObject = new TestObject();
         testObject.setStringValue("Testing Testing 123");

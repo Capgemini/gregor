@@ -28,11 +28,11 @@ import java.util.Map;
  */
 public class JSONSerializer implements Serializer {
 
-    private Gson gson;
+    private Gson gson = new Gson();
 
     @Override
     public void configure(Map map, boolean b) {
-        gson = new Gson();
+        //DO NOTHING
     }
 
     @Override
