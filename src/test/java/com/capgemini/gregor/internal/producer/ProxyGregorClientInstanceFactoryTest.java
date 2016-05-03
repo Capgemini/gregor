@@ -70,6 +70,7 @@ public class ProxyGregorClientInstanceFactoryTest {
         details.setClientClass(SimpleKafkaClient.class);
         details.setKeyClassType(Void.class);
         details.setPayloadClassType(String.class);
+        details.setKeySerializerClass(StringSerializer.class);
         details.setPayloadSerializerClass(StringSerializer.class);
         details.setProducerMethod(SimpleKafkaClient.class.getDeclaredMethod("produce", String.class));
         details.setTopicName("testTopic");

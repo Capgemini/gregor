@@ -33,9 +33,9 @@ public class MutableProducerDetails implements ProducerDetails {
     
     private Class<?> payloadClassType;
     
-    private Class<? extends Serializer<?>> keySerializerClass = StringSerializer.class;
+    private Class<? extends Serializer<?>> keySerializerClass;
     
-    private Class<? extends Serializer<?>> payloadSerializerClass = StringSerializer.class;
+    private Class<? extends Serializer<?>> payloadSerializerClass;
 
     public String getTopicName() {
         return topicName;
