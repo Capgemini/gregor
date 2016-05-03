@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package com.capgemini.gregor.com.capgemini.gregor.serializer;
+package com.capgemini.gregor.serializer;
 
 import com.capgemini.gregor.TestObject;
 import org.junit.Test;
