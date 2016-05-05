@@ -25,7 +25,5 @@ package com.capgemini.gregor;
 public enum PayloadContent {
     JSON,
     
-    XML,
-    
     STRING;
 }

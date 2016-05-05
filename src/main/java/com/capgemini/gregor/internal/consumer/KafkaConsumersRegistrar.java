@@ -159,14 +159,9 @@ public class KafkaConsumersRegistrar implements ImportBeanDefinitionRegistrar, B
                     return JSONDecoder.class;
                 case STRING:
                     return StringDecoder.class;
-                case XML:
-                    //TODO
-                    break;
                 default:
-                    return StringDecoder.class;
+                    return JSONDecoder.class;
             }
         }
-        
-        return null;
     }
 }

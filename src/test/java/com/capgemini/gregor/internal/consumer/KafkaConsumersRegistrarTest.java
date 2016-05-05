@@ -138,7 +138,7 @@ public class KafkaConsumersRegistrarTest {
         @KafkaConsumer(topic = TEST_TOPIC,
                        keyDecoder = JSONDecoder.class,
                        payloadDecoder = StringDecoder.class,
-                       payloadContent = PayloadContent.XML)
+                       payloadContent = PayloadContent.STRING)
         public void consume(TestObject value) {
             
         }
