@@ -2,6 +2,8 @@
 # gregor
 A utility library that makes consuming from and sending messages to a Kafka broker within a Spring project easier, by simply adding a few annotations to bean methods or interfaces.
 
+*** Gregor is currently in a pre-alpha stage and should not be used in a production environment under any circumstances!***
+
 ## Configuring
 In order to integrate gregor into your Spring application, two simple steps must be followed:
 
