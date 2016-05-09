@@ -1,6 +1,6 @@
 [![Circle CI](https://circleci.com/gh/Capgemini/gregor.svg?style=svg)](https://circleci.com/gh/Capgemini/gregor)
 # gregor
-A utility library that simplifies consuming from and sending messages to a Kafka broker.
+A utility library that makes consuming from and sending messages to a Kafka broker within a Spring project easier, by simply adding a few annotations to bean methods or interfaces.
 
 ## Configuring
 In order to integrate gregor into your Spring application, two simple steps must be followed:
@@ -23,3 +23,6 @@ The consumer method should have a single argument.  The payload of the message w
 ****Note**** - The key cannot currently be obtained from an `@KafkaConsumer` annotated method but this is in the pipeline.
 
 ## Sending Messages To Kafka
+If an interface is annotated with `@KafkaClient`, gregor will automatically create an implementation bean of that interface, with each method acting as a kafka producer.
+
+Methods must be annotated with `@KafkaProducer(topic=xxx)`.
