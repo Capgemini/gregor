@@ -20,7 +20,7 @@ The consumer method should have a single argument.  The payload of the message w
 
 - Set the `payloadDecoder` value on the `@KafkaConsumer` annotation.  This allows you to specify a custom decoder that can be used to deserialize the kafka message into the correct argument type.  The value should be a class that implements `kafka.serializer.Decoder`.
 
-****Note**** - The key cannot currently be obtained from an `@KafkaConsumer` annotated method but this is in the pipeline.
+***Note*** - The key cannot currently be obtained from an `@KafkaConsumer` annotated method but this is in the pipeline.
 
 ## Sending Messages To Kafka
 If an interface is annotated with `@KafkaClient`, gregor will automatically create an implementation bean of that interface, with each method acting as a kafka producer.
@@ -29,3 +29,5 @@ Methods must be annotated with `@KafkaProducer(topic=xxx)`, and multiple produce
 
 ### Method arguments
 The producer methods should have a single argument, which defines the payload.  The strategy for serializing the payload can be defined by setting the `payloadSerializer` property on the `@KafkaProducer` annotation.  The value should be a class that implements `org.apache.kafka.common.serialization.Serializer`, and defaults to `com.capgemini.gregor.serializer.JSONSerializer`.
+
+***Note*** - The key cannot currently be specified when producing messages, but this is in the pipeline.
