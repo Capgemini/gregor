@@ -22,6 +22,9 @@ import kafka.producer.KeyedMessage;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import java.util.List;
+import java.util.concurrent.TimeoutException;
+
 /**
  * Base class for tests that require a kafka instance to be running.
  * 
@@ -50,8 +53,12 @@ public class BaseKafkaTest {
     public static void startKafka() {
         kafka = new KafkaUnit(ZOOKEEPER_PORT, BROKER_PORT);
         kafka.startup();
-        
-        sleep();
+
+        try {
+            Thread.sleep(WAIT_TIME_MS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         
         kafka.createTopic(TEST_TOPIC);
         kafka.createTopic(TEST_TOPIC2);
@@ -71,23 +78,23 @@ public class BaseKafkaTest {
     
     protected void sendMessage(String topic, String value) {
         final KeyedMessage<String, String> message = new KeyedMessage<String, String>(topic, value);
-        
+
         kafka.sendMessages(message);
+    }
+
+    protected List<String> readMessages(String topic, int expectedMessages) throws TimeoutException {
+        return kafka.readMessages(topic, expectedMessages);
     }
     
     protected void waitForMessage() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        sleep();
     }
-    
+
     private static void sleep() {
         try {
             Thread.sleep(WAIT_TIME_MS);
         } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

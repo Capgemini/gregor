@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.junit.After;
@@ -30,41 +31,28 @@ import com.capgemini.gregor.integration.SingleStringProducerTest.TestConfigurati
 @IntegrationTest({"kafka.addresses=localhost:" + BaseKafkaTest.BROKER_PORT,
     "zookeeper.address=localhost:" + BaseKafkaTest.ZOOKEEPER_PORT})
 public class SingleStringProducerTest extends BaseKafkaTest {
-
-    public static List<String> receivedMessages = new ArrayList<String>();
-    
-    @After
-    public void reset() {
-        receivedMessages.clear();
-    }
     
     @Autowired
     private TestProducer testProducer;
     
     @Test
-    public void testSendingSingleMessage() {
+    public void testSendingSingleMessage() throws TimeoutException {
         final String messageText = "Testing Testing 123";
         
         testProducer.sendMessage(messageText);
-        
         waitForMessage();
-        
+
+        final List<String> receivedMessages = readMessages(TEST_TOPIC, 1);
         assertEquals("Message not received", 1, receivedMessages.size());
         assertEquals("Received message is not correct", messageText, receivedMessages.get(0));
     }
     
     @Configuration
     @EnableKafkaProducers
-    @EnableKafkaConsumers
     public static class TestConfiguration {
 
         public TestConfiguration() {
             
-        }
-        
-        @KafkaConsumer(topic = TEST_TOPIC, payloadContent = PayloadContent.STRING)
-        public void testConsumer(String value) {
-            receivedMessages.add(value);
         }
         
         @KafkaClient
