@@ -25,4 +25,7 @@ The consumer method should have a single argument.  The payload of the message w
 ## Sending Messages To Kafka
 If an interface is annotated with `@KafkaClient`, gregor will automatically create an implementation bean of that interface, with each method acting as a kafka producer.
 
-Methods must be annotated with `@KafkaProducer(topic=xxx)`.
+Methods must be annotated with `@KafkaProducer(topic=xxx)`, and multiple producer methods can be defined in the same interface.
+
+### Method arguments
+The producer methods should have a single argument, which defines the payload.  The strategy for serializing the payload can be defined by setting the `payloadSerializer` property on the `@KafkaProducer` annotation.  The value should be a class that implements `org.apache.kafka.common.serialization.Serializer`, and defaults to `com.capgemini.gregor.serializer.JSONSerializer`.
