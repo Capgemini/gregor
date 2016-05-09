@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
+import com.capgemini.gregor.serializer.JSONSerializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.core.type.MethodMetadata;
@@ -34,7 +35,7 @@ public class KafkaProducerDetailsParser implements DetailsParser<ProducerDetails
     
     private static final Class<?> DEFAULT_KEY_SERIALIZER_CLASS = StringSerializer.class;
     
-    private static final Class<?> DEFAULT_PAYLOAD_SERIALIZER_CLASS = StringSerializer.class;
+    private static final Class<?> DEFAULT_PAYLOAD_SERIALIZER_CLASS = JSONSerializer.class;
     
     private Class<? extends Annotation> methodLevelAnnotation;
     

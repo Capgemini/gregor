@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.capgemini.gregor.serializer.JSONSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,7 +40,7 @@ public class KafkaProducerDetailsParserTest {
         
         assertEquals("Incorrect payload class type",  String.class, details.getPayloadClassType());
         assertEquals("Incorrect key class type",  Void.class, details.getKeyClassType());
-        assertEquals("Incorrect payload serializer class",  StringSerializer.class, details.getPayloadSerializerClass());
+        assertEquals("Incorrect payload serializer class", JSONSerializer.class, details.getPayloadSerializerClass());
         assertEquals("Incorrect key serializer type",  StringSerializer.class, details.getKeySerializerClass());
     }
     
@@ -56,7 +57,7 @@ public class KafkaProducerDetailsParserTest {
         
         assertEquals("Incorrect payload class type",  TestObject.class, details.getPayloadClassType());
         assertEquals("Incorrect key class type",  String.class, details.getKeyClassType());
-        assertEquals("Incorrect payload serializer class",  StringSerializer.class, details.getPayloadSerializerClass());
+        assertEquals("Incorrect payload serializer class",  JSONSerializer.class, details.getPayloadSerializerClass());
         assertEquals("Incorrect key serializer type",  StringSerializer.class, details.getKeySerializerClass());
     }
     
