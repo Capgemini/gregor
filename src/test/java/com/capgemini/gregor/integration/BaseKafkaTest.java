@@ -19,6 +19,7 @@ package com.capgemini.gregor.integration;
 import info.batey.kafka.unit.KafkaUnit;
 import kafka.producer.KeyedMessage;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -71,6 +72,30 @@ public class BaseKafkaTest {
         
         sleep();
     }
+
+    @After
+    public void drainMessages() {
+        //Kafka unit doesn't currently support clearing messages so drain
+        //messages so leftover messages from previous tests do not affect results.
+
+        try {
+            readMessages(TEST_TOPIC, 10);
+        } catch (TimeoutException e) {
+            //No need to do anything here
+        }
+
+        try {
+            readMessages(TEST_TOPIC2, 10);
+        } catch (TimeoutException e) {
+            //No need to do anything here
+        }
+
+        try {
+            readMessages(TEST_TOPIC3, 10);
+        } catch (TimeoutException e) {
+            //No need to do anything here
+        }
+    }
     
     protected void createTopic(String topicName) {
         kafka.createTopic(topicName);
@@ -80,6 +105,8 @@ public class BaseKafkaTest {
         final KeyedMessage<String, String> message = new KeyedMessage<String, String>(topic, value);
 
         kafka.sendMessages(message);
+
+        sleep();
     }
 
     protected List<String> readMessages(String topic, int expectedMessages) throws TimeoutException {
