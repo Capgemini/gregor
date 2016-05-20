@@ -69,4 +69,31 @@ public class TestObject {
     public void setMapValue(Map<String, String> mapValue) {
         this.mapValue = mapValue;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TestObject that = (TestObject) o;
+
+        if (getIntValue() != that.getIntValue()) return false;
+        if (isBooleanValue() != that.isBooleanValue()) return false;
+        if (getStringValue() != null ? !getStringValue().equals(that.getStringValue()) : that.getStringValue() != null)
+            return false;
+        if (getListValue() != null ? !getListValue().equals(that.getListValue()) : that.getListValue() != null)
+            return false;
+        return getMapValue() != null ? getMapValue().equals(that.getMapValue()) : that.getMapValue() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getStringValue() != null ? getStringValue().hashCode() : 0;
+        result = 31 * result + getIntValue();
+        result = 31 * result + (isBooleanValue() ? 1 : 0);
+        result = 31 * result + (getListValue() != null ? getListValue().hashCode() : 0);
+        result = 31 * result + (getMapValue() != null ? getMapValue().hashCode() : 0);
+        return result;
+    }
 }

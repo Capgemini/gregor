@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.capgemini.gregor.serializer.JSONSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,5 +31,5 @@ public @interface KafkaProducer {
     
     Class<?> keySerializer() default StringSerializer.class;
     
-    Class<?> payloadSerializer() default StringSerializer.class;
+    Class<?> payloadSerializer() default JSONSerializer.class;
 }
