@@ -18,9 +18,17 @@ package com.capgemini.gregor.internal.producer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.Future;
 
+import com.capgemini.gregor.KafkaProducerCallback;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.JdkFutureAdapters;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.record.Record;
 
 public class KafkaProducerInvocationHandler implements InvocationHandler {
 
@@ -37,11 +45,40 @@ public class KafkaProducerInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
 
-        System.out.println("Sending...");
-        //TODO sort this out properly
-        producer.send(new ProducerRecord(details.getTopicName(), args[0]));
-        
+        final KafkaProducerCallback callback = getCallback(method, args);
+
+        final Future<RecordMetadata> future = producer.send(new ProducerRecord(details.getTopicName(), args[0]));
+
+        if (callback != null) {
+            wireUpCallback(future, callback);
+        }
         return null;
     }
 
+    private KafkaProducerCallback getCallback(Method method, Object[] args) {
+        for (Object arg : args) {
+            if (arg instanceof KafkaProducerCallback) {
+                return (KafkaProducerCallback) arg;
+            }
+        }
+
+        return null;
+    }
+
+    private void wireUpCallback(final Future<RecordMetadata> future, final KafkaProducerCallback callback) {
+        final ListenableFuture<RecordMetadata> listenableFuture = JdkFutureAdapters.listenInPoolThread(future);
+        //TODO threadpool
+        Futures.addCallback(listenableFuture, new FutureCallback<RecordMetadata>(){
+
+            @Override
+            public void onSuccess(RecordMetadata metadata) {
+                callback.onSuccess(metadata);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
+        });
+    }
 }

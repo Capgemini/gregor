@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
+import com.capgemini.gregor.KafkaProducerCallback;
 import com.capgemini.gregor.serializer.JSONSerializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -103,9 +104,18 @@ public class KafkaProducerDetailsParser implements DetailsParser<ProducerDetails
         final Parameter[] parameters = method.getParameters();
         
         //If there is only 1 parameter, then this must be the payload
-        if (parameters.length == 1 ) {
+        if (parameters.length == 1) {
             return parameters[0].getType();
         } else if (parameters.length > 1) {
+            if (parameters.length == 2) {
+                //If one of the parameters is KafkaProducerCallback, then the other parameter must be the payload
+                if (KafkaProducerCallback.class.isAssignableFrom(parameters[0].getType())) {
+                    return parameters[1].getType();
+                } else if (KafkaProducerCallback.class.isAssignableFrom(parameters[1].getType())) {
+                    return parameters[0].getType();
+                }
+            }
+
             //Check if any parameter is annotated with @Payload or @Key
             Integer keyIndex = null;
             

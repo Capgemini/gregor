@@ -35,5 +35,4 @@ public interface ProducerDetails extends InstanceDetails {
     Class<? extends Serializer<?>> getKeySerializerClass();
     
     Class<? extends Serializer<?>> getPayloadSerializerClass();
-
 }
